@@ -53,6 +53,7 @@ export interface Messages {
   schedule_generate_button: string;
   schedule_swap_hint: string;
   schedule_empty_grid: string;
+  schedule_no_courts_message: string;
 
   explain_ODD_BEGINNERS: (n: number) => string;
   explain_FOUR_BEGINNERS: string;

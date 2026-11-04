@@ -53,6 +53,7 @@ export const en: Messages = {
   schedule_generate_button: 'Generate schedule',
   schedule_swap_hint: 'Tap a player, then tap another to swap',
   schedule_empty_grid: 'No rounds yet - tap "Generate schedule" above, after checking Setup and present players',
+  schedule_no_courts_message: 'Not enough present players for a court yet (need at least 4).',
 
   explain_ODD_BEGINNERS: (n) => `${n} beginners - not enough stronger players`,
   explain_FOUR_BEGINNERS: 'All four players are beginners',

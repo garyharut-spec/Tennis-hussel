@@ -58,6 +58,7 @@ export function renderRoundGrid(
   const rosterById = new Map(roster.map((m) => [m.id, m]));
 
   container.innerHTML = `
+    ${round.games.length === 0 ? `<p class="no-courts-message">${t('schedule_no_courts_message')}</p>` : ''}
     <div class="court-grid">${round.games.map((g) => gameHtml(g, rosterById)).join('')}</div>
     <div class="sitting-out-strip">
       <h3>${t('now_sitting_out_label')}</h3>
