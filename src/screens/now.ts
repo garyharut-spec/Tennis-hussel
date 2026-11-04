@@ -1,13 +1,17 @@
+import { playChangeoverAlert } from '../changeoverAlert.ts';
 import { onLanguageChange, t } from '../i18n/index.ts';
+import { isSoundEnabled, isWallMode, setSoundEnabled, setWallMode } from '../preferences.ts';
 import { currentRoundIndex, needsReplan, regenerateFrom, timeGridFor } from '../schedule.ts';
 import { ensureSession } from '../session.ts';
 import { getData, onDataChange, updateData } from '../store.ts';
 import { swapPlayers } from '../manualEdit.ts';
 import { pushUndoSnapshot } from '../undo.ts';
+import { releaseWakeLock, requestWakeLock } from '../wakeLock.ts';
 import { renderRoundGrid } from './roundView.ts';
 
 export function renderNow(root: HTMLElement): () => void {
   let timerHandle: ReturnType<typeof setInterval> | undefined;
+  let lastSecondsRemaining: number | null = null;
 
   function render(): void {
     const data = getData();
@@ -20,17 +24,27 @@ export function renderNow(root: HTMLElement): () => void {
         ${round ? `<span class="round-heading">${t('round_heading', round.index + 1)}</span><span class="time-remaining" data-time-remaining></span>` : ''}
         ${needsReplan(data, session, roundIndex < 0 ? 0 : roundIndex) ? `<button type="button" class="replan-button">${t('schedule_replan_button')}</button>` : ''}
       </div>
+      <div class="now-toggles">
+        <label><input type="checkbox" class="sound-toggle" ${isSoundEnabled() ? 'checked' : ''} /> ${t('now_sound_toggle_label')}</label>
+        <label><input type="checkbox" class="wall-toggle" ${isWallMode() ? 'checked' : ''} /> ${t('now_wall_mode_label')}</label>
+      </div>
       <p class="swap-hint">${t('schedule_swap_hint')}</p>
       <div class="round-container"></div>
       ${!round ? `<p class="empty-grid">${t('schedule_empty_grid')}</p>` : ''}
     `;
 
-    const replanButton = root.querySelector('.replan-button');
-    replanButton?.addEventListener('click', () => {
+    root.querySelector('.replan-button')?.addEventListener('click', () => {
       updateData((d) => {
         const s = ensureSession(d);
         regenerateFrom(d, s, Math.max(roundIndex, 0));
       });
+    });
+
+    (root.querySelector('.sound-toggle') as HTMLInputElement).addEventListener('change', (e) => {
+      setSoundEnabled((e.target as HTMLInputElement).checked);
+    });
+    (root.querySelector('.wall-toggle') as HTMLInputElement).addEventListener('change', (e) => {
+      setWallMode((e.target as HTMLInputElement).checked);
     });
 
     if (round) {
@@ -58,6 +72,7 @@ export function renderNow(root: HTMLElement): () => void {
     const slot = grid.find((s) => s.index === roundIndex);
     if (!slot) {
       el.textContent = '';
+      lastSecondsRemaining = null;
       return;
     }
     const [endH, endM] = slot.end.split(':').map(Number);
@@ -65,12 +80,20 @@ export function renderNow(root: HTMLElement): () => void {
     end.setHours(endH ?? 0, endM ?? 0, 0, 0);
     const diffMs = end.getTime() - Date.now();
     const totalSeconds = Math.max(0, Math.round(diffMs / 1000));
+
+    if (isSoundEnabled() && lastSecondsRemaining !== null && lastSecondsRemaining > 0 && totalSeconds === 0) {
+      playChangeoverAlert();
+    }
+    lastSecondsRemaining = totalSeconds;
+
     const mm = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
     const ss = String(totalSeconds % 60).padStart(2, '0');
     el.textContent = `${t('now_time_remaining_label')}: ${mm}:${ss}`;
   }
 
   render();
+  if (isWallMode()) document.body.classList.add('wall-mode');
+  void requestWakeLock();
   timerHandle = setInterval(updateTimer, 1000);
   const unsubscribeLanguage = onLanguageChange(render);
   const unsubscribeData = onDataChange(render);
@@ -79,5 +102,6 @@ export function renderNow(root: HTMLElement): () => void {
     clearInterval(timerHandle);
     unsubscribeLanguage();
     unsubscribeData();
+    releaseWakeLock();
   };
 }

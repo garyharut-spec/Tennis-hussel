@@ -62,4 +62,24 @@ export const nl: Messages = {
   explain_REPEAT_PARTNER: 'Herhaalde partners',
   explain_REPEAT_OPPONENT: 'Herhaalde tegenstanders',
   explain_SAME_COURT_AS_LAST_ROUND: 'Zelfde baan als vorige ronde',
+
+  now_sound_toggle_label: 'Geluid bij wissel',
+  now_wall_mode_label: 'Wandscherm',
+
+  stats_games_played_heading: 'Partijen vanavond',
+  stats_games_count: (n) => (n === 1 ? '1 partij' : `${n} partijen`),
+  stats_no_players: 'Nog geen spelers',
+  stats_history_heading: 'Eerdere avonden',
+  stats_history_players_count: (n) => (n === 1 ? '1 speler' : `${n} spelers`),
+  stats_no_history: 'Nog geen eerdere avonden',
+  stats_close_session_button: 'Avond afsluiten',
+  stats_close_confirm_message:
+    'Dit sluit de avond van vanavond af en bewaart alleen de datum, het aantal spelers, banen en rondes. Namen en het schema worden verwijderd.',
+  stats_close_confirm_button: 'Ja, avond afsluiten',
+  stats_close_cancel_button: 'Annuleren',
+  stats_export_button: 'JSON exporteren',
+  stats_import_button: 'JSON importeren',
+  stats_import_error: 'Dit bestand is geen geldige Hussel-backup',
+  stats_backup_reminder:
+    'Deze app bewaart gegevens alleen op dit toestel. Exporteer regelmatig een backup voor het geval de browser zijn opslag wist.',
 };

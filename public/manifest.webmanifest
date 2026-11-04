@@ -1,0 +1,13 @@
+{
+  "name": "Hussel",
+  "short_name": "Hussel",
+  "description": "Hussel / Hussel tennisavond",
+  "start_url": "/Tennis-hussel/",
+  "scope": "/Tennis-hussel/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a7a3c",
+  "icons": [
+    { "src": "/Tennis-hussel/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

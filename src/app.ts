@@ -3,6 +3,7 @@ import { renderNow } from './screens/now.ts';
 import { renderPlayers } from './screens/players.ts';
 import { renderSchedule } from './screens/schedule.ts';
 import { renderSetup } from './screens/setup.ts';
+import { renderStats } from './screens/stats.ts';
 
 export const TABS = ['setup', 'players', 'now', 'schedule', 'stats'] as const;
 export type Tab = (typeof TABS)[number];
@@ -48,6 +49,8 @@ export function renderApp(root: HTMLElement): () => void {
       screenCleanup = renderNow(content);
     } else if (activeTab === 'schedule') {
       screenCleanup = renderSchedule(content);
+    } else if (activeTab === 'stats') {
+      screenCleanup = renderStats(content);
     } else {
       content.textContent = t(TAB_LABEL_KEYS[activeTab]);
     }

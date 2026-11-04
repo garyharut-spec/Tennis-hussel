@@ -42,11 +42,11 @@ describe('renderApp', () => {
     expect(localStorage.getItem('hussel:language')).toBe('nl');
   });
 
-  it('shows placeholder text for the unbuilt Stats tab', () => {
+  it('switches to the Stats screen on click', () => {
     const root = document.createElement('div');
     renderApp(root);
 
     root.querySelector<HTMLButtonElement>('[data-tab="stats"]')!.click();
-    expect(root.querySelector('.tab-content')?.textContent).toBe('Stats');
+    expect(root.querySelector('.close-session-button')).not.toBeNull();
   });
 });

@@ -61,4 +61,22 @@ export const en: Messages = {
   explain_REPEAT_PARTNER: 'Repeat partners',
   explain_REPEAT_OPPONENT: 'Repeat opponents',
   explain_SAME_COURT_AS_LAST_ROUND: 'Same court as last round',
+
+  now_sound_toggle_label: 'Sound at changeover',
+  now_wall_mode_label: 'Wall display',
+
+  stats_games_played_heading: 'Games played tonight',
+  stats_games_count: (n) => (n === 1 ? '1 game' : `${n} games`),
+  stats_no_players: 'No players yet',
+  stats_history_heading: 'Past sessions',
+  stats_history_players_count: (n) => (n === 1 ? '1 player' : `${n} players`),
+  stats_no_history: 'No past sessions yet',
+  stats_close_session_button: 'Close session',
+  stats_close_confirm_message: 'This ends tonight’s session and keeps only the date, player count, courts and rounds. Names and the schedule are discarded.',
+  stats_close_confirm_button: 'Yes, close session',
+  stats_close_cancel_button: 'Cancel',
+  stats_export_button: 'Export JSON',
+  stats_import_button: 'Import JSON',
+  stats_import_error: 'That file isn’t a valid Hussel backup',
+  stats_backup_reminder: 'This app only stores data on this device. Export a backup regularly in case the browser clears its storage.',
 };

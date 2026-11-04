@@ -61,4 +61,22 @@ export interface Messages {
   explain_REPEAT_PARTNER: string;
   explain_REPEAT_OPPONENT: string;
   explain_SAME_COURT_AS_LAST_ROUND: string;
+
+  now_sound_toggle_label: string;
+  now_wall_mode_label: string;
+
+  stats_games_played_heading: string;
+  stats_games_count: (n: number) => string;
+  stats_no_players: string;
+  stats_history_heading: string;
+  stats_history_players_count: (n: number) => string;
+  stats_no_history: string;
+  stats_close_session_button: string;
+  stats_close_confirm_message: string;
+  stats_close_confirm_button: string;
+  stats_close_cancel_button: string;
+  stats_export_button: string;
+  stats_import_button: string;
+  stats_import_error: string;
+  stats_backup_reminder: string;
 }

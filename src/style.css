@@ -345,3 +345,43 @@ label {
   min-height: 60px;
   font-family: inherit;
 }
+
+.now-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.now-toggles label {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+body.wall-mode .player-card {
+  font-size: 1.4rem;
+  min-height: 64px;
+}
+
+body.wall-mode .round-heading,
+body.wall-mode .time-remaining {
+  font-size: 1.6rem;
+}
+
+body.wall-mode .now-toggles,
+body.wall-mode .swap-hint {
+  display: none;
+}
+
+.backup-section,
+.close-session-section {
+  margin-top: 1rem;
+}
+
+.backup-reminder {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
