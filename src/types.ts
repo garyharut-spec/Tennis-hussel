@@ -22,10 +22,14 @@ export interface Attendance {
   until: string | null;
 }
 
+export type { Explanation } from './scheduler/index.ts';
+import type { Explanation } from './scheduler/index.ts';
+
 export interface Game {
   court: number;
   teamA: [string, string];
   teamB: [string, string];
+  explanations?: Explanation[];
 }
 
 export interface Round {
@@ -34,6 +38,7 @@ export interface Round {
   games: Game[];
   sittingOut: string[];
   locked: boolean;
+  notes?: string;
 }
 
 export interface Session {

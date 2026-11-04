@@ -1,5 +1,7 @@
 import { getLanguage, onLanguageChange, setLanguage, t, type Language } from './i18n/index.ts';
+import { renderNow } from './screens/now.ts';
 import { renderPlayers } from './screens/players.ts';
+import { renderSchedule } from './screens/schedule.ts';
 import { renderSetup } from './screens/setup.ts';
 
 export const TABS = ['setup', 'players', 'now', 'schedule', 'stats'] as const;
@@ -42,6 +44,10 @@ export function renderApp(root: HTMLElement): () => void {
       screenCleanup = renderSetup(content);
     } else if (activeTab === 'players') {
       screenCleanup = renderPlayers(content);
+    } else if (activeTab === 'now') {
+      screenCleanup = renderNow(content);
+    } else if (activeTab === 'schedule') {
+      screenCleanup = renderSchedule(content);
     } else {
       content.textContent = t(TAB_LABEL_KEYS[activeTab]);
     }

@@ -42,10 +42,11 @@ describe('renderApp', () => {
     expect(localStorage.getItem('hussel:language')).toBe('nl');
   });
 
-  it('shows placeholder text for the unbuilt Now/Schedule/Stats tabs', () => {
+  it('shows placeholder text for the unbuilt Stats tab', () => {
     const root = document.createElement('div');
     renderApp(root);
 
-    expect(root.querySelector('.tab-content')?.textContent).toBe('Now');
+    root.querySelector<HTMLButtonElement>('[data-tab="stats"]')!.click();
+    expect(root.querySelector('.tab-content')?.textContent).toBe('Stats');
   });
 });

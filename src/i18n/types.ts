@@ -35,4 +35,30 @@ export interface Messages {
   players_initial_placeholder: string;
   players_confirm_button: string;
   players_cancel_button: string;
+
+  now_sitting_out_label: string;
+  now_no_round: string;
+  now_time_remaining_label: string;
+  round_heading: (n: number) => string;
+
+  schedule_round_select_label: string;
+  schedule_lock_button: string;
+  schedule_unlock_button: string;
+  schedule_regenerate_button: string;
+  schedule_undo_button: string;
+  schedule_notes_placeholder: string;
+  schedule_locked_notice: string;
+  schedule_replan_banner: string;
+  schedule_replan_button: string;
+  schedule_swap_hint: string;
+  schedule_swap_cancel: string;
+  schedule_empty_grid: string;
+
+  explain_ODD_BEGINNERS: (n: number) => string;
+  explain_FOUR_BEGINNERS: string;
+  explain_BEGINNERS_SAME_TEAM: string;
+  explain_TEAM_IMBALANCE: string;
+  explain_REPEAT_PARTNER: string;
+  explain_REPEAT_OPPONENT: string;
+  explain_SAME_COURT_AS_LAST_ROUND: string;
 }
