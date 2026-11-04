@@ -1,0 +1,75 @@
+:root {
+  --bg: #ffffff;
+  --fg: #111111;
+  --accent: #1a7a3c;
+  --border: #d8d8d8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111111;
+    --fg: #f0f0f0;
+    --accent: #3cd97a;
+    --border: #333333;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.tab-nav {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-button {
+  flex: 1 0 auto;
+  min-height: 48px;
+  padding: 0.5rem 0.75rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--fg);
+  font-size: 1rem;
+}
+
+.tab-button.active {
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.tab-content {
+  flex: 1;
+  padding: 1rem;
+}
