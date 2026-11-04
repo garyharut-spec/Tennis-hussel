@@ -49,6 +49,8 @@ export interface Messages {
   schedule_locked_notice: string;
   schedule_replan_banner: string;
   schedule_replan_button: string;
+  schedule_generate_banner: string;
+  schedule_generate_button: string;
   schedule_swap_hint: string;
   schedule_empty_grid: string;
 

@@ -49,8 +49,10 @@ export const en: Messages = {
   schedule_locked_notice: 'This round is locked and can’t be edited',
   schedule_replan_banner: 'Attendance changed since this was planned.',
   schedule_replan_button: 'Replan from now',
+  schedule_generate_banner: 'No schedule yet for tonight.',
+  schedule_generate_button: 'Generate schedule',
   schedule_swap_hint: 'Tap a player, then tap another to swap',
-  schedule_empty_grid: 'No rounds yet - check Setup and present players',
+  schedule_empty_grid: 'No rounds yet - tap "Generate schedule" above, after checking Setup and present players',
 
   explain_ODD_BEGINNERS: (n) => `${n} beginners - not enough stronger players`,
   explain_FOUR_BEGINNERS: 'All four players are beginners',

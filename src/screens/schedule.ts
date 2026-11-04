@@ -31,7 +31,13 @@ export function renderSchedule(root: HTMLElement): () => void {
         <button type="button" class="regenerate-button">${t('schedule_regenerate_button')}</button>
         <button type="button" class="undo-button" ${canUndo() ? '' : 'disabled'}>${t('schedule_undo_button')}</button>
       </div>
-      ${needsReplan(data, session, selectedRoundIndex) ? `<p class="replan-banner">${t('schedule_replan_banner')} <button type="button" class="replan-button">${t('schedule_replan_button')}</button></p>` : ''}
+      ${
+        rounds.length === 0
+          ? `<p class="replan-banner">${t('schedule_generate_banner')} <button type="button" class="replan-button">${t('schedule_generate_button')}</button></p>`
+          : needsReplan(data, session, selectedRoundIndex)
+            ? `<p class="replan-banner">${t('schedule_replan_banner')} <button type="button" class="replan-button">${t('schedule_replan_button')}</button></p>`
+            : ''
+      }
       ${round?.locked ? `<p class="locked-notice">${t('schedule_locked_notice')}</p>` : `<p class="swap-hint">${t('schedule_swap_hint')}</p>`}
       <div class="round-container"></div>
       ${!round ? `<p class="empty-grid">${t('schedule_empty_grid')}</p>` : ''}

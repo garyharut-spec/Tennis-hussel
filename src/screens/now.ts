@@ -22,7 +22,13 @@ export function renderNow(root: HTMLElement): () => void {
     root.innerHTML = `
       <div class="now-header">
         ${round ? `<span class="round-heading">${t('round_heading', round.index + 1)}</span><span class="time-remaining" data-time-remaining></span>` : ''}
-        ${needsReplan(data, session, roundIndex < 0 ? 0 : roundIndex) ? `<button type="button" class="replan-button">${t('schedule_replan_button')}</button>` : ''}
+        ${
+          session.rounds.length === 0
+            ? `<button type="button" class="replan-button">${t('schedule_generate_button')}</button>`
+            : needsReplan(data, session, roundIndex < 0 ? 0 : roundIndex)
+              ? `<button type="button" class="replan-button">${t('schedule_replan_button')}</button>`
+              : ''
+        }
       </div>
       <div class="now-toggles">
         <label><input type="checkbox" class="sound-toggle" ${isSoundEnabled() ? 'checked' : ''} /> ${t('now_sound_toggle_label')}</label>

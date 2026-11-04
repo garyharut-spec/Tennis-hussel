@@ -50,8 +50,10 @@ export const nl: Messages = {
   schedule_locked_notice: 'Deze ronde is vastgezet en kan niet worden aangepast',
   schedule_replan_banner: 'Aanwezigheid is gewijzigd sinds dit werd ingepland.',
   schedule_replan_button: 'Opnieuw plannen vanaf nu',
+  schedule_generate_banner: 'Nog geen schema voor vanavond.',
+  schedule_generate_button: 'Schema maken',
   schedule_swap_hint: 'Tik op een speler en dan op een andere om te wisselen',
-  schedule_empty_grid: 'Nog geen rondes - controleer instellingen en aanwezige spelers',
+  schedule_empty_grid: 'Nog geen rondes - tik hierboven op "Schema maken", na het controleren van instellingen en aanwezige spelers',
 
   explain_ODD_BEGINNERS: (n) => `${n} beginners - niet genoeg sterkere spelers erbij`,
   explain_FOUR_BEGINNERS: 'Alle vier spelers zijn beginners',
