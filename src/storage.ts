@@ -24,16 +24,97 @@ function emptyData(): AppData {
   };
 }
 
+function isValidMember(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const m = value as Record<string, unknown>;
+  return (
+    typeof m['id'] === 'string' &&
+    typeof m['firstName'] === 'string' &&
+    (m['lastInitial'] === undefined || typeof m['lastInitial'] === 'string') &&
+    typeof m['level'] === 'number'
+  );
+}
+
+function isValidHistoryEntry(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const h = value as Record<string, unknown>;
+  return (
+    typeof h['date'] === 'string' &&
+    typeof h['players'] === 'number' &&
+    typeof h['courts'] === 'number' &&
+    typeof h['rounds'] === 'number'
+  );
+}
+
+function isValidDefaults(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const d = value as Record<string, unknown>;
+  return (
+    Array.isArray(d['courts']) &&
+    d['courts'].every((c) => typeof c === 'number') &&
+    typeof d['start'] === 'string' &&
+    typeof d['end'] === 'string' &&
+    typeof d['gameMinutes'] === 'number' &&
+    typeof d['gapMinutes'] === 'number' &&
+    typeof d['beginnerThreshold'] === 'number'
+  );
+}
+
+function isValidTeam(value: unknown): boolean {
+  return Array.isArray(value) && value.length === 2 && value.every((id) => typeof id === 'string');
+}
+
+function isValidGame(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const g = value as Record<string, unknown>;
+  return typeof g['court'] === 'number' && isValidTeam(g['teamA']) && isValidTeam(g['teamB']);
+}
+
+function isValidRound(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const r = value as Record<string, unknown>;
+  return (
+    typeof r['index'] === 'number' &&
+    typeof r['start'] === 'string' &&
+    Array.isArray(r['games']) &&
+    r['games'].every(isValidGame) &&
+    Array.isArray(r['sittingOut']) &&
+    r['sittingOut'].every((id) => typeof id === 'string') &&
+    typeof r['locked'] === 'boolean' &&
+    (r['notes'] === undefined || typeof r['notes'] === 'string')
+  );
+}
+
+function isValidAttendance(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const a = value as Record<string, unknown>;
+  return typeof a['memberId'] === 'string' && typeof a['from'] === 'string' && (a['until'] === null || typeof a['until'] === 'string');
+}
+
+function isValidSession(value: unknown): boolean {
+  if (typeof value !== 'object' || value === null) return false;
+  const s = value as Record<string, unknown>;
+  return (
+    typeof s['id'] === 'string' &&
+    isValidDefaults(s['config']) &&
+    Array.isArray(s['attendance']) &&
+    s['attendance'].every(isValidAttendance) &&
+    Array.isArray(s['rounds']) &&
+    s['rounds'].every(isValidRound)
+  );
+}
+
 function isValidAppData(value: unknown): value is AppData {
   if (typeof value !== 'object' || value === null) return false;
   const v = value as Record<string, unknown>;
   return (
     typeof v['version'] === 'number' &&
     Array.isArray(v['roster']) &&
-    typeof v['defaults'] === 'object' &&
-    v['defaults'] !== null &&
+    v['roster'].every(isValidMember) &&
+    isValidDefaults(v['defaults']) &&
     Array.isArray(v['history']) &&
-    (v['currentSession'] === null || typeof v['currentSession'] === 'object')
+    v['history'].every(isValidHistoryEntry) &&
+    (v['currentSession'] === null || isValidSession(v['currentSession']))
   );
 }
 

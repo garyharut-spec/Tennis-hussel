@@ -20,7 +20,7 @@ export function renderStats(root: HTMLElement): () => void {
       .sort((a, b) => b[1] - a[1])
       .map(([id, n]) => {
         const member = rosterById.get(id);
-        const name = member ? escapeHtml(displayName(member)) : id;
+        const name = escapeHtml(member ? displayName(member) : id);
         return `<li>${name} – ${escapeHtml(t('stats_games_count', n))}</li>`;
       })
       .join('');
@@ -28,7 +28,10 @@ export function renderStats(root: HTMLElement): () => void {
     const historyRows = [...data.history]
       .slice()
       .reverse()
-      .map((h) => `<li>${escapeHtml(h.date)}: ${escapeHtml(t('stats_history_players_count', h.players))} (${h.courts} courts, ${h.rounds} rounds)</li>`)
+      .map(
+        (h) =>
+          `<li>${escapeHtml(String(h.date))}: ${escapeHtml(t('stats_history_players_count', h.players))} (${escapeHtml(String(h.courts))} courts, ${escapeHtml(String(h.rounds))} rounds)</li>`,
+      )
       .join('');
 
     root.innerHTML = `

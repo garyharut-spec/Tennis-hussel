@@ -1,3 +1,4 @@
+import { escapeHtml } from '../escape.ts';
 import { getLanguage, onLanguageChange, t } from '../i18n/index.ts';
 import { formatDecimal, parseDecimal } from '../i18n/number.ts';
 import { ensureSession } from '../session.ts';
@@ -34,12 +35,12 @@ export function renderSetup(root: HTMLElement): () => void {
 
         <label>
           ${t('setup_start_label')}
-          <input type="time" name="start" value="${config.start}" />
+          <input type="time" name="start" value="${escapeHtml(config.start)}" />
         </label>
 
         <label>
           ${t('setup_end_label')}
-          <input type="time" name="end" value="${config.end}" />
+          <input type="time" name="end" value="${escapeHtml(config.end)}" />
         </label>
         <p class="field-error" data-error="time" hidden>${t('setup_end_before_start')}</p>
 

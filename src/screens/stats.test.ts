@@ -63,6 +63,17 @@ describe('renderStats', () => {
     expect(getData().history).toHaveLength(0);
   });
 
+  it('escapes HTML-looking data in the history list instead of injecting it', () => {
+    updateData((d) => {
+      d.history.push({ date: '<img src=x onerror=alert(1)>', players: 1, courts: 1, rounds: 1 });
+    });
+    const root = document.createElement('div');
+    renderStats(root);
+
+    expect(root.querySelector('img')).toBeNull();
+    expect(root.textContent).toContain('<img src=x onerror=alert(1)>');
+  });
+
   it('exports the current data as JSON via a download link', () => {
     addPresentMembersAndGenerate(4);
     const root = document.createElement('div');
