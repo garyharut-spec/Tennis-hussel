@@ -38,6 +38,9 @@ body {
 }
 
 .app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border);
 }
@@ -45,6 +48,27 @@ body {
 .app-header h1 {
   margin: 0;
   font-size: 1.25rem;
+}
+
+.lang-toggle {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.lang-button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.4rem 0.6rem;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--fg);
+  font-size: 0.9rem;
+}
+
+.lang-button.active {
+  border-color: var(--accent);
+  font-weight: 600;
 }
 
 .tab-nav {
