@@ -37,7 +37,6 @@ export interface Messages {
   players_cancel_button: string;
 
   now_sitting_out_label: string;
-  now_no_round: string;
   now_time_remaining_label: string;
   round_heading: (n: number) => string;
 
@@ -51,7 +50,6 @@ export interface Messages {
   schedule_replan_banner: string;
   schedule_replan_button: string;
   schedule_swap_hint: string;
-  schedule_swap_cancel: string;
   schedule_empty_grid: string;
 
   explain_ODD_BEGINNERS: (n: number) => string;

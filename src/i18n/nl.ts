@@ -38,7 +38,6 @@ export const nl: Messages = {
   players_cancel_button: 'Annuleren',
 
   now_sitting_out_label: 'Zit af',
-  now_no_round: 'Nu geen ronde',
   now_time_remaining_label: 'Resterende tijd',
   round_heading: (n) => `Ronde ${n}`,
 
@@ -52,7 +51,6 @@ export const nl: Messages = {
   schedule_replan_banner: 'Aanwezigheid is gewijzigd sinds dit werd ingepland.',
   schedule_replan_button: 'Opnieuw plannen vanaf nu',
   schedule_swap_hint: 'Tik op een speler en dan op een andere om te wisselen',
-  schedule_swap_cancel: 'Wisselen annuleren',
   schedule_empty_grid: 'Nog geen rondes - controleer instellingen en aanwezige spelers',
 
   explain_ODD_BEGINNERS: (n) => `${n} beginners - niet genoeg sterkere spelers erbij`,
@@ -63,7 +61,7 @@ export const nl: Messages = {
   explain_REPEAT_OPPONENT: 'Herhaalde tegenstanders',
   explain_SAME_COURT_AS_LAST_ROUND: 'Zelfde baan als vorige ronde',
 
-  now_sound_toggle_label: 'Geluid bij wissel',
+  now_sound_toggle_label: 'Geluid bij rondewissel',
   now_wall_mode_label: 'Wandscherm',
 
   stats_games_played_heading: 'Partijen vanavond',
@@ -74,12 +72,12 @@ export const nl: Messages = {
   stats_no_history: 'Nog geen eerdere avonden',
   stats_close_session_button: 'Avond afsluiten',
   stats_close_confirm_message:
-    'Dit sluit de avond van vanavond af en bewaart alleen de datum, het aantal spelers, banen en rondes. Namen en het schema worden verwijderd.',
+    'Dit sluit de avond af en bewaart alleen de datum, het aantal spelers, banen en rondes. Namen en het schema worden verwijderd.',
   stats_close_confirm_button: 'Ja, avond afsluiten',
   stats_close_cancel_button: 'Annuleren',
   stats_export_button: 'JSON exporteren',
   stats_import_button: 'JSON importeren',
   stats_import_error: 'Dit bestand is geen geldige Hussel-backup',
   stats_backup_reminder:
-    'Deze app bewaart gegevens alleen op dit toestel. Exporteer regelmatig een backup voor het geval de browser zijn opslag wist.',
+    'Deze app bewaart gegevens alleen op dit apparaat. Exporteer regelmatig een backup voor het geval de browser zijn opslag wist.',
 };

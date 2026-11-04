@@ -37,7 +37,6 @@ export const en: Messages = {
   players_cancel_button: 'Cancel',
 
   now_sitting_out_label: 'Sitting out',
-  now_no_round: 'No round right now',
   now_time_remaining_label: 'Time left',
   round_heading: (n) => `Round ${n}`,
 
@@ -51,7 +50,6 @@ export const en: Messages = {
   schedule_replan_banner: 'Attendance changed since this was planned.',
   schedule_replan_button: 'Replan from now',
   schedule_swap_hint: 'Tap a player, then tap another to swap',
-  schedule_swap_cancel: 'Cancel swap',
   schedule_empty_grid: 'No rounds yet - check Setup and present players',
 
   explain_ODD_BEGINNERS: (n) => `${n} beginners - not enough stronger players`,
