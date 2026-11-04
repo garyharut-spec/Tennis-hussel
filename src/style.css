@@ -97,3 +97,131 @@ body {
   flex: 1;
   padding: 1rem;
 }
+
+input[type='text'],
+input[type='number'],
+input[type='time'],
+select {
+  min-height: 44px;
+  font-size: 1rem;
+  padding: 0.4rem 0.5rem;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--bg);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.setup-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.save-default {
+  flex-direction: row;
+  align-items: center;
+}
+
+.field-error {
+  color: #c0392b;
+  margin: -0.5rem 0 0.75rem;
+}
+
+.quick-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.quick-add input {
+  flex: 1 1 120px;
+}
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+.sort-controls label {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.roster {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.roster-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.roster-row.beginner {
+  border-color: var(--accent);
+}
+
+.roster-name {
+  flex: 1 1 auto;
+  font-weight: 600;
+}
+
+.beginner-tag {
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.level-input {
+  width: 4rem;
+}
+
+.present-toggle {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.empty-state {
+  opacity: 0.7;
+}
+
+.duplicate-prompt {
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}

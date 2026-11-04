@@ -8,4 +8,31 @@ export interface Messages {
   tab_schedule: string;
   tab_stats: string;
   playerCount: (n: number) => string;
+
+  setup_courts_label: string;
+  setup_courts_invalid: string;
+  setup_start_label: string;
+  setup_end_label: string;
+  setup_end_before_start: string;
+  setup_game_minutes_label: string;
+  setup_gap_minutes_label: string;
+  setup_beginner_threshold_label: string;
+  setup_save_default_label: string;
+
+  players_add_name_placeholder: string;
+  players_add_level_placeholder: string;
+  players_add_button: string;
+  players_add_invalid_level: string;
+  players_sort_label: string;
+  players_sort_name: string;
+  players_sort_level: string;
+  players_present_label: string;
+  players_delete_button: string;
+  players_beginner_marker: string;
+  players_present_count: (n: number) => string;
+  players_empty_state: string;
+  players_duplicate_prompt: (name: string) => string;
+  players_initial_placeholder: string;
+  players_confirm_button: string;
+  players_cancel_button: string;
 }

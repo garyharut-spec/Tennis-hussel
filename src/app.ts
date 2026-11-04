@@ -1,4 +1,6 @@
 import { getLanguage, onLanguageChange, setLanguage, t, type Language } from './i18n/index.ts';
+import { renderPlayers } from './screens/players.ts';
+import { renderSetup } from './screens/setup.ts';
 
 export const TABS = ['setup', 'players', 'now', 'schedule', 'stats'] as const;
 export type Tab = (typeof TABS)[number];
@@ -13,6 +15,7 @@ const TAB_LABEL_KEYS = {
 
 export function renderApp(root: HTMLElement): () => void {
   let activeTab: Tab = 'now';
+  let screenCleanup: (() => void) | undefined;
 
   root.innerHTML = `
     <header class="app-header">
@@ -31,13 +34,26 @@ export function renderApp(root: HTMLElement): () => void {
   const content = root.querySelector('.tab-content') as HTMLElement;
   const langButtons = root.querySelectorAll<HTMLButtonElement>('[data-lang]');
 
+  function renderScreen(): void {
+    screenCleanup?.();
+    screenCleanup = undefined;
+    content.innerHTML = '';
+    if (activeTab === 'setup') {
+      screenCleanup = renderSetup(content);
+    } else if (activeTab === 'players') {
+      screenCleanup = renderPlayers(content);
+    } else {
+      content.textContent = t(TAB_LABEL_KEYS[activeTab]);
+    }
+  }
+
   function renderStaticText(): void {
     title.textContent = t('appTitle');
     for (const tab of TABS) {
       const button = nav.querySelector<HTMLButtonElement>(`[data-tab="${tab}"]`);
       if (button) button.textContent = t(TAB_LABEL_KEYS[tab]);
     }
-    renderContent();
+    renderScreen();
   }
 
   function updateActiveTab(): void {
@@ -53,10 +69,6 @@ export function renderApp(root: HTMLElement): () => void {
     }
   }
 
-  function renderContent(): void {
-    content.textContent = t(TAB_LABEL_KEYS[activeTab]);
-  }
-
   nav.innerHTML = TABS.map((tab) => `<button type="button" data-tab="${tab}" class="tab-button"></button>`).join('');
 
   nav.addEventListener('click', (event) => {
@@ -64,7 +76,7 @@ export function renderApp(root: HTMLElement): () => void {
     if (!button) return;
     activeTab = button.dataset['tab'] as Tab;
     updateActiveTab();
-    renderContent();
+    renderScreen();
   });
 
   for (const button of langButtons) {
@@ -73,7 +85,7 @@ export function renderApp(root: HTMLElement): () => void {
     });
   }
 
-  const unsubscribe = onLanguageChange(() => {
+  const unsubscribeLanguage = onLanguageChange(() => {
     renderStaticText();
     updateActiveLanguage();
   });
@@ -82,5 +94,8 @@ export function renderApp(root: HTMLElement): () => void {
   updateActiveTab();
   updateActiveLanguage();
 
-  return unsubscribe;
+  return () => {
+    screenCleanup?.();
+    unsubscribeLanguage();
+  };
 }

@@ -16,7 +16,7 @@ describe('renderApp', () => {
     expect(root.querySelectorAll('[data-tab]')).toHaveLength(TABS.length);
   });
 
-  it('switches the active tab on click', () => {
+  it('switches to the Players screen on click', () => {
     const root = document.createElement('div');
     renderApp(root);
 
@@ -24,7 +24,7 @@ describe('renderApp', () => {
     playersButton.click();
 
     expect(playersButton.classList.contains('active')).toBe(true);
-    expect(root.querySelector('.tab-content')?.textContent).toBe('Players');
+    expect(root.querySelector('.quick-add input[name="name"]')).not.toBeNull();
   });
 
   it('switches every visible string and persists the language on NL click, keeping the active tab', () => {
@@ -38,7 +38,14 @@ describe('renderApp', () => {
     expect(root.querySelector('h1')?.textContent).toBe('Hussel');
     expect(root.querySelector('[data-tab="players"]')?.textContent).toBe('Spelers');
     expect(root.querySelector('[data-tab="players"]')?.classList.contains('active')).toBe(true);
-    expect(root.querySelector('.tab-content')?.textContent).toBe('Spelers');
+    expect(root.querySelector('.quick-add input[name="name"]')?.getAttribute('placeholder')).toBe('Naam');
     expect(localStorage.getItem('hussel:language')).toBe('nl');
+  });
+
+  it('shows placeholder text for the unbuilt Now/Schedule/Stats tabs', () => {
+    const root = document.createElement('div');
+    renderApp(root);
+
+    expect(root.querySelector('.tab-content')?.textContent).toBe('Now');
   });
 });
