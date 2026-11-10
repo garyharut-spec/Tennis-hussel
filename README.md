@@ -30,12 +30,12 @@ further setup.
 
 Everything - the roster, defaults, and the current session - lives in this
 browser's `localStorage` only. There's no server and no sync between
-devices. Use the **Export JSON** button on the Stats tab regularly, and
+devices. Use the **Export JSON** button in the ☰ menu regularly, and
 especially before clearing site data, switching browsers, or getting a new
-phone. **Import JSON** on the Stats tab restores from that file, replacing
+phone. **Import JSON** in the ☰ menu restores from that file, replacing
 everything currently stored.
 
-Closing a session (also on the Stats tab) is intentionally one-way for
+Closing a session (also in the ☰ menu) is intentionally one-way for
 privacy: it appends `{date, players, courts, rounds}` to history and
 discards the attendance list, the schedule, and every name from that
 session. The club roster (names + skill levels) is unaffected.
