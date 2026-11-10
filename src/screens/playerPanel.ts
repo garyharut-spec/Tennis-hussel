@@ -18,7 +18,7 @@ interface PendingDuplicate {
   existingMemberId: string;
 }
 
-/** The player list: "Add player" dropdown on top, then the present players. */
+/** The player list: add-player dropdown on top, then the present players. */
 export function renderPlayerPanel(root: HTMLElement): () => void {
   let sortByLevel = false;
   let editingId: string | null = null;

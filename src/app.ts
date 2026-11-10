@@ -1,110 +1,137 @@
+import { playChangeoverAlert } from './changeoverAlert.ts';
 import { getLanguage, onLanguageChange, setLanguage, t, type Language } from './i18n/index.ts';
-import { renderNow } from './screens/now.ts';
-import { renderPlayers } from './screens/players.ts';
-import { renderSchedule } from './screens/schedule.ts';
-import { renderSetup } from './screens/setup.ts';
-import { renderStats } from './screens/stats.ts';
+import { isSoundEnabled, isWallMode } from './preferences.ts';
+import { roundStatus, timeGridFor } from './schedule.ts';
+import { renderMenu } from './screens/menu.ts';
+import { renderPlayerPanel } from './screens/playerPanel.ts';
+import { renderRounds } from './screens/rounds.ts';
+import { renderSettings } from './screens/settings.ts';
+import { ensureSession } from './session.ts';
+import { getData, onDataChange } from './store.ts';
+import { releaseWakeLock, requestWakeLock } from './wakeLock.ts';
 
-export const TABS = ['setup', 'players', 'now', 'schedule', 'stats'] as const;
-export type Tab = (typeof TABS)[number];
+type Overlay = 'settings' | 'menu';
 
-const TAB_LABEL_KEYS = {
-  setup: 'tab_setup',
-  players: 'tab_players',
-  now: 'tab_now',
-  schedule: 'tab_schedule',
-  stats: 'tab_stats',
-} as const;
+function isNarrow(): boolean {
+  return window.matchMedia?.('(max-width: 899px)').matches ?? false;
+}
 
 export function renderApp(root: HTMLElement): () => void {
-  let activeTab: Tab = 'now';
-  let screenCleanup: (() => void) | undefined;
+  let overlayCleanup: (() => void) | undefined;
+  let lastSeconds: number | null = null;
 
   root.innerHTML = `
     <header class="app-header">
+      <button type="button" class="menu-toggle">☰</button>
       <h1></h1>
+      <span class="countdown"></span>
       <div class="lang-toggle">
         <button type="button" data-lang="en" class="lang-button">EN</button>
         <button type="button" data-lang="nl" class="lang-button">NL</button>
       </div>
+      <button type="button" class="cog-button">⚙</button>
     </header>
-    <nav class="tab-nav"></nav>
-    <main class="tab-content"></main>
+    <div class="layout" data-mobile-view="rounds">
+      <aside class="player-aside">
+        <button type="button" class="back-button"></button>
+        <div class="player-panel"></div>
+      </aside>
+      <main class="rounds-main"></main>
+    </div>
+    <div class="overlay" hidden><div class="overlay-body"></div></div>
   `;
 
   const title = root.querySelector('h1') as HTMLElement;
-  const nav = root.querySelector('.tab-nav') as HTMLElement;
-  const content = root.querySelector('.tab-content') as HTMLElement;
+  const countdown = root.querySelector('.countdown') as HTMLElement;
+  const menuToggle = root.querySelector('.menu-toggle') as HTMLButtonElement;
+  const cogButton = root.querySelector('.cog-button') as HTMLButtonElement;
+  const backButton = root.querySelector('.back-button') as HTMLButtonElement;
+  const layout = root.querySelector('.layout') as HTMLElement;
+  const overlay = root.querySelector('.overlay') as HTMLElement;
+  const overlayBody = root.querySelector('.overlay-body') as HTMLElement;
   const langButtons = root.querySelectorAll<HTMLButtonElement>('[data-lang]');
 
-  function renderScreen(): void {
-    screenCleanup?.();
-    screenCleanup = undefined;
-    content.innerHTML = '';
-    if (activeTab === 'setup') {
-      screenCleanup = renderSetup(content);
-    } else if (activeTab === 'players') {
-      screenCleanup = renderPlayers(content);
-    } else if (activeTab === 'now') {
-      screenCleanup = renderNow(content);
-    } else if (activeTab === 'schedule') {
-      screenCleanup = renderSchedule(content);
-    } else if (activeTab === 'stats') {
-      screenCleanup = renderStats(content);
-    } else {
-      content.textContent = t(TAB_LABEL_KEYS[activeTab]);
+  const cleanups = [
+    renderPlayerPanel(root.querySelector('.player-panel') as HTMLElement),
+    renderRounds(root.querySelector('.rounds-main') as HTMLElement),
+  ];
+
+  function closeOverlay(): void {
+    overlayCleanup?.();
+    overlayCleanup = undefined;
+    overlayBody.innerHTML = '';
+    overlay.hidden = true;
+  }
+
+  function openOverlay(kind: Overlay): void {
+    closeOverlay();
+    overlay.hidden = false;
+    overlayCleanup =
+      kind === 'settings'
+        ? renderSettings(overlayBody, closeOverlay)
+        : renderMenu(overlayBody, {
+            showPlayersEntry: isNarrow(),
+            onPlayers: () => {
+              layout.dataset['mobileView'] = 'players';
+              closeOverlay();
+            },
+            onClose: closeOverlay,
+          });
+  }
+
+  function updateCountdown(): void {
+    const session = ensureSession(getData());
+    const now = new Date();
+    const slot = timeGridFor(session).find((s) => roundStatus(session, s.index, now) === 'now');
+    if (!slot) {
+      countdown.textContent = '';
+      lastSeconds = null;
+      return;
     }
+    const [h, m] = slot.end.split(':').map(Number);
+    const end = new Date(now);
+    end.setHours(h ?? 0, m ?? 0, 0, 0);
+    const total = Math.max(0, Math.round((end.getTime() - now.getTime()) / 1000));
+    if (isSoundEnabled() && lastSeconds !== null && lastSeconds > 0 && total === 0) playChangeoverAlert();
+    lastSeconds = total;
+    const mm = String(Math.floor(total / 60)).padStart(2, '0');
+    const ss = String(total % 60).padStart(2, '0');
+    countdown.textContent = `${t('header_next_changeover')}: ${mm}:${ss}`;
   }
 
   function renderStaticText(): void {
     title.textContent = t('appTitle');
-    for (const tab of TABS) {
-      const button = nav.querySelector<HTMLButtonElement>(`[data-tab="${tab}"]`);
-      if (button) button.textContent = t(TAB_LABEL_KEYS[tab]);
-    }
-    renderScreen();
-  }
-
-  function updateActiveTab(): void {
-    for (const button of nav.querySelectorAll<HTMLButtonElement>('[data-tab]')) {
-      button.classList.toggle('active', button.dataset['tab'] === activeTab);
-    }
-  }
-
-  function updateActiveLanguage(): void {
+    menuToggle.setAttribute('aria-label', t('menu_button_label'));
+    cogButton.setAttribute('aria-label', t('settings_button_label'));
+    backButton.textContent = `← ${t('back_button_label')}`;
     const language = getLanguage();
-    for (const button of langButtons) {
-      button.classList.toggle('active', button.dataset['lang'] === language);
-    }
+    for (const button of langButtons) button.classList.toggle('active', button.dataset['lang'] === language);
+    updateCountdown();
   }
 
-  nav.innerHTML = TABS.map((tab) => `<button type="button" data-tab="${tab}" class="tab-button"></button>`).join('');
-
-  nav.addEventListener('click', (event) => {
-    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-tab]');
-    if (!button) return;
-    activeTab = button.dataset['tab'] as Tab;
-    updateActiveTab();
-    renderScreen();
+  menuToggle.addEventListener('click', () => openOverlay('menu'));
+  cogButton.addEventListener('click', () => openOverlay('settings'));
+  backButton.addEventListener('click', () => {
+    layout.dataset['mobileView'] = 'rounds';
   });
-
   for (const button of langButtons) {
-    button.addEventListener('click', () => {
-      setLanguage(button.dataset['lang'] as Language);
-    });
+    button.addEventListener('click', () => setLanguage(button.dataset['lang'] as Language));
   }
 
-  const unsubscribeLanguage = onLanguageChange(() => {
-    renderStaticText();
-    updateActiveLanguage();
-  });
+  const unsubscribeLanguage = onLanguageChange(renderStaticText);
+  const unsubscribeData = onDataChange(updateCountdown);
+  const timer = setInterval(updateCountdown, 1000);
 
   renderStaticText();
-  updateActiveTab();
-  updateActiveLanguage();
+  if (isWallMode()) document.body.classList.add('wall-mode');
+  void requestWakeLock();
 
   return () => {
-    screenCleanup?.();
+    clearInterval(timer);
     unsubscribeLanguage();
+    unsubscribeData();
+    closeOverlay();
+    for (const cleanup of cleanups) cleanup();
+    releaseWakeLock();
   };
 }

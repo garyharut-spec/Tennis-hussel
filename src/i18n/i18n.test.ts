@@ -17,17 +17,17 @@ describe('t()', () => {
   });
 
   it('translates a plain key in the active language', () => {
-    expect(t('tab_now')).toBe('Now');
+    expect(t('round_tag_now')).toBe('Now');
     setLanguage('nl');
-    expect(t('tab_now')).toBe('Nu');
+    expect(t('round_tag_now')).toBe('Nu');
   });
 
   it('pluralises via a function key', () => {
-    expect(t('playerCount', 1)).toBe('1 player');
-    expect(t('playerCount', 2)).toBe('2 players');
+    expect(t('settings_courts_count', 1)).toBe('1 court');
+    expect(t('settings_courts_count', 2)).toBe('2 courts');
     setLanguage('nl');
-    expect(t('playerCount', 1)).toBe('1 speler');
-    expect(t('playerCount', 2)).toBe('2 spelers');
+    expect(t('settings_courts_count', 1)).toBe('1 baan');
+    expect(t('settings_courts_count', 2)).toBe('2 banen');
   });
 
   it('persists the choice and updates document language', () => {
