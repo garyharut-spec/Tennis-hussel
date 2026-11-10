@@ -53,7 +53,7 @@ export const nl: Messages = {
   schedule_generate_banner: 'Nog geen schema voor vanavond.',
   schedule_generate_button: 'Schema maken',
   schedule_swap_hint: 'Tik op een speler en dan op een andere om te wisselen',
-  schedule_empty_grid: 'Nog geen rondes - tik hierboven op "Schema maken", na het controleren van instellingen en aanwezige spelers',
+  schedule_empty_grid: 'Nog geen rondes - voeg de aanwezige spelers toe en tik dan op "Schema maken"',
   schedule_no_courts_message: 'Nog niet genoeg aanwezige spelers voor een baan (minimaal 4 nodig).',
 
   explain_ODD_BEGINNERS: (n) => `${n} beginners - niet genoeg sterkere spelers erbij`,
