@@ -4,10 +4,6 @@ A one-page, mobile-first web app that organises a weekly tennis meetup into
 30-minute doubles rounds on a limited set of courts. No accounts, no backend
 - an organiser runs the whole evening from one phone or tablet.
 
-See `PLAN.md` for the full design/requirements and `TASKS.md` for the
-build log and known limitations. `CLAUDE.md` has the conventions this
-codebase follows.
-
 ## Running it
 
 ```

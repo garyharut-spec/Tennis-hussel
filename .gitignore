@@ -4,3 +4,11 @@ dist-ssr
 *.local
 .DS_Store
 .superpowers/
+
+# Claude / planning files (local only)
+.claude/
+CLAUDE.md
+PLAN.md
+TASKS.md
+docs/superpowers/
+.superpowers/

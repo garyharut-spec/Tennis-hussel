@@ -1,4 +1,4 @@
-/** Penalty weights for pairing, in descending priority order (PLAN.md section 4a). Tunable constants. */
+/** Penalty weights for pairing, in descending priority order. Tunable constants. */
 export const WEIGHTS = {
   oddBeginners: 1000,
   fourBeginners: 500,

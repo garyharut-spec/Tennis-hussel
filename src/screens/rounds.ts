@@ -85,7 +85,7 @@ function roundHtml(round: Round, status: RoundStatus, roster: Map<string, Member
 /**
  * The main page: every round of the evening, each with its courts and a "resting this round"
  * list. Rounds that have started (or are locked) are read-only; upcoming rounds support both
- * tap-to-swap and SortableJS drag-and-drop, which share one swap path (PLAN.md 6a).
+ * tap-to-swap and SortableJS drag-and-drop, which share one swap path.
  */
 export function renderRounds(root: HTMLElement): () => void {
   let sortables: Sortable[] = [];
