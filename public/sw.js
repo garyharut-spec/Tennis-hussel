@@ -1,4 +1,5 @@
-const CACHE_NAME = 'hussel-v1';
+// Bump this whenever a release must not be served from an older cache (activate deletes other names).
+const CACHE_NAME = 'hussel-v2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting());
@@ -18,6 +19,20 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
+
+  // Page loads: network first, so a new release shows up as soon as the user is online;
+  // the cached copy is only the offline fallback. Hashed assets below stay cache-first.
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
+          return response;
+        })
+        .catch(() => caches.match(request).then((cached) => cached ?? Response.error())),
+    );
+    return;
+  }
 
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
