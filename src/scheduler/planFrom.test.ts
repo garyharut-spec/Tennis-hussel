@@ -40,6 +40,38 @@ describe('planFrom', () => {
     expect(Math.max(...gamesPlayed) - Math.min(...gamesPlayed)).toBeLessThanOrEqual(1);
   });
 
+  it('keeps a player with leaveFromRound out of that round and every later one, but plays them before', () => {
+    const timeGrid = computeTimeGrid('19:00', '21:00', 30, 0); // 4 rounds
+    const players: BasicPlayer[] = makePlayers(8).map((p) => (p.id === 'p0' ? { ...p, leaveFromRound: 2 } : p));
+    const rounds = planFrom({
+      roundIndex: 0,
+      timeGrid,
+      existingRounds: [],
+      presentPlayers: players,
+      defaultCourts: [1, 2, 3, 4],
+      beginnerThreshold: 8.0,
+      rng: createRng(7),
+    });
+    const appears = (r: RoundLike) => [...r.games.flatMap((g) => [...g.teamA, ...g.teamB]), ...r.sittingOut].includes('p0');
+    expect(rounds.map(appears)).toEqual([true, true, false, false]);
+  });
+
+  it('onlyThisRound regenerates just that round and keeps every later round as-is', () => {
+    const timeGrid = computeTimeGrid('19:00', '21:00', 30, 0);
+    const presentPlayers = makePlayers(12);
+    const base = { timeGrid, presentPlayers, defaultCourts: [1, 2], beginnerThreshold: 8.0 };
+    const first = planFrom({ ...base, roundIndex: 0, existingRounds: [], rng: createRng(1) });
+
+    const changedFor = (seed: number) => {
+      const out = planFrom({ ...base, roundIndex: 1, existingRounds: first, rng: createRng(seed), onlyThisRound: true });
+      expect(out[0]).toEqual(first[0]);
+      expect(out[2]).toEqual(first[2]);
+      expect(out[3]).toEqual(first[3]);
+      return JSON.stringify(out[1]) !== JSON.stringify(first[1]);
+    };
+    expect([1, 2, 3, 4, 5, 6].some(changedFor)).toBe(true);
+  });
+
   it('preserves locked rounds and rounds before roundIndex untouched', () => {
     const timeGrid = computeTimeGrid('19:00', '21:00', 30, 0); // 4 rounds
     const presentPlayers = makePlayers(8);

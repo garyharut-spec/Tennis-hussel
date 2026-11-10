@@ -1,4 +1,4 @@
-import { isPresent } from './attendance.ts';
+import { isPresent, leavesAt, setLeavesAt } from './attendance.ts';
 import { computeTimeGrid, createRng, planFrom, type RoundLike } from './scheduler/index.ts';
 import type { AppData, Round, Session } from './types.ts';
 
@@ -33,9 +33,41 @@ export function timeGridFor(session: Session): ReturnType<typeof computeTimeGrid
   return computeTimeGrid(session.config.start, session.config.end, session.config.gameMinutes, session.config.gapMinutes);
 }
 
+/** Index of the first round a player will not play because of a planned leave time; undefined if none. */
+function leaveRoundIndex(session: Session, memberId: string): number | undefined {
+  const at = leavesAt(session, memberId);
+  if (at === undefined) return undefined;
+  const grid = timeGridFor(session);
+  return (grid.find((s) => s.start >= at) ?? { index: grid.length }).index;
+}
+
+/** Start times (`HH:MM`) of the rounds that have not begun yet, in order. */
+export function upcomingRoundStarts(session: Session, now: Date = new Date()): string[] {
+  const first = firstReplanIndex(session, now);
+  return timeGridFor(session)
+    .filter((s) => s.index >= first)
+    .map((s) => s.start);
+}
+
+/**
+ * Plans (or with null cancels) a player's leave and re-plans the unlocked rounds from the first one the
+ * change affects, so the schedule already reflects it. Rounds that have started or are locked stay as they are.
+ */
+export function changeLeave(data: AppData, session: Session, memberId: string, hhmm: string | null, now: Date = new Date()): void {
+  const before = leaveRoundIndex(session, memberId);
+  setLeavesAt(session, memberId, hhmm);
+  const after = leaveRoundIndex(session, memberId);
+  if (session.rounds.length === 0) return;
+  const from = Math.max(Math.min(before ?? Infinity, after ?? Infinity), firstReplanIndex(session, now));
+  if (from >= timeGridFor(session).length) return;
+  regenerateFrom(data, session, from, now);
+}
+
 /** Regenerates every unlocked round from roundIndex onward using who is currently present. */
-export function regenerateFrom(data: AppData, session: Session, roundIndex: number, now: Date = new Date()): void {
-  const presentPlayers = data.roster.filter((m) => isPresent(session, m.id)).map((m) => ({ id: m.id, level: m.level }));
+export function regenerateFrom(data: AppData, session: Session, roundIndex: number, now: Date = new Date(), onlyThisRound = false): void {
+  const presentPlayers = data.roster
+    .filter((m) => isPresent(session, m.id, now))
+    .map((m) => ({ id: m.id, level: m.level, leaveFromRound: leaveRoundIndex(session, m.id) }));
 
   const rounds = planFrom({
     roundIndex,
@@ -45,6 +77,7 @@ export function regenerateFrom(data: AppData, session: Session, roundIndex: numb
     defaultCourts: session.config.courts,
     beginnerThreshold: session.config.beginnerThreshold,
     rng: createRng(seedFor(session.id, roundIndex, now)),
+    onlyThisRound,
   });
 
   session.rounds = rounds.map(toPersistedRound);
@@ -64,7 +97,11 @@ export function setRoundNotes(session: Session, roundIndex: number, notes: strin
 export function needsReplan(data: AppData, session: Session, fromRoundIndex: number): boolean {
   if (session.rounds.length === 0) return timeGridFor(session).length > 0;
 
-  const presentIds = new Set(data.roster.filter((m) => isPresent(session, m.id)).map((m) => m.id));
+  const presentIds = new Set(
+    data.roster
+      .filter((m) => isPresent(session, m.id) && (leaveRoundIndex(session, m.id) ?? Infinity) > fromRoundIndex)
+      .map((m) => m.id),
+  );
   const scheduledIds = new Set<string>();
   for (const round of session.rounds) {
     if (round.index < fromRoundIndex || round.locked) continue;

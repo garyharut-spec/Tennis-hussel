@@ -5,12 +5,12 @@ import { TEAM_IMBALANCE_EXPLAIN_THRESHOLD, WEIGHTS } from './weights.ts';
 
 export type ExplanationCode =
   | 'ODD_BEGINNERS'
-  | 'FOUR_BEGINNERS'
   | 'BEGINNERS_SAME_TEAM'
   | 'TEAM_IMBALANCE'
   | 'REPEAT_PARTNER'
   | 'REPEAT_OPPONENT'
-  | 'SAME_COURT_AS_LAST_ROUND';
+  | 'SAME_COURT_AS_LAST_ROUND'
+  | 'SINGLES_GAME';
 
 export interface Explanation {
   code: ExplanationCode;
@@ -92,7 +92,6 @@ function explainGame(
   const beginnerCount = beginnerCountOf(players, all, beginnerThreshold);
 
   if (beginnerCount % 2 === 1) explanations.push({ code: 'ODD_BEGINNERS', params: { n: beginnerCount } });
-  if (beginnerCount === 4) explanations.push({ code: 'FOUR_BEGINNERS' });
   if (
     beginnerCount === 2 &&
     (teamIsAllBeginners(players, teamA, beginnerThreshold) || teamIsAllBeginners(players, teamB, beginnerThreshold))

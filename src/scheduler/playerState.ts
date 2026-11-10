@@ -21,7 +21,7 @@ export function pairCount(counts: Map<string, number>, a: string, b: string): nu
 }
 
 export interface RoundLikeForFolding {
-  games: Array<{ court: number; teamA: [string, string]; teamB: [string, string] }>;
+  games: Array<{ court: number; teamA: string[]; teamB: string[] }>;
   sittingOut: string[];
 }
 
@@ -43,8 +43,9 @@ export function foldRoundIntoStats(
         state.lastCourt = game.court;
       }
     }
-    incrementPair(partnerCounts, game.teamA[0], game.teamA[1]);
-    incrementPair(partnerCounts, game.teamB[0], game.teamB[1]);
+    for (const team of [game.teamA, game.teamB]) {
+      if (team[0] !== undefined && team[1] !== undefined) incrementPair(partnerCounts, team[0], team[1]);
+    }
     for (const a of game.teamA) {
       for (const b of game.teamB) {
         incrementPair(opponentCounts, a, b);

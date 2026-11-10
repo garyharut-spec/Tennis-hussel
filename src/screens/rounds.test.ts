@@ -77,7 +77,10 @@ describe('renderRounds', () => {
     const cleanup = renderRounds(root);
     generate(root);
     const labels = [...root.querySelectorAll('.round[data-round-index="0"] .court-label')].map((e) => e.textContent);
-    expect(labels).toEqual(['Court 3', 'Court 7']);
+    expect(labels).toEqual(['Court 3', 'Court 7', 'Court 12']);
+    const empty = root.querySelectorAll('.round[data-round-index="0"] .court-card.empty');
+    expect(empty).toHaveLength(1);
+    expect(empty[0]!.querySelector('.court-label')?.textContent).toBe('Court 12');
     cleanup();
 
     localStorage.clear();
@@ -138,8 +141,8 @@ describe('renderRounds', () => {
     cleanup();
   });
 
-  it('shows a message instead of courts when fewer than 4 are present', () => {
-    seed(3);
+  it('shows a message instead of courts when fewer than 2 are present', () => {
+    seed(1);
     const root = document.createElement('div');
     const cleanup = renderRounds(root);
     generate(root);
@@ -161,19 +164,37 @@ describe('renderRounds', () => {
     cleanup();
   });
 
-  it('lock button locks the first upcoming round; undo restores after regenerate', () => {
+  it('each upcoming round has its own lock button; undo restores after regenerate', () => {
     seed(22);
     const root = document.createElement('div');
     const cleanup = renderRounds(root);
     generate(root);
-    (root.querySelector('.lock-button') as HTMLButtonElement).click();
-    expect(getData().currentSession!.rounds[1]!.locked).toBe(true);
+    expect(root.querySelectorAll('.round[data-round-index="0"] .lock-button').length).toBe(0);
+    (root.querySelector('.round[data-round-index="2"] .lock-button') as HTMLButtonElement).click();
+    expect(getData().currentSession!.rounds[2]!.locked).toBe(true);
+    expect(getData().currentSession!.rounds[1]!.locked).toBe(false);
     expect(getData().currentSession!.rounds[0]!.locked).toBe(false);
 
     const before = structuredClone(getData().currentSession!.rounds);
     (root.querySelector('.regenerate-button') as HTMLButtonElement).click();
     (root.querySelector('.undo-button') as HTMLButtonElement).click();
     expect(getData().currentSession!.rounds).toEqual(before);
+    cleanup();
+  });
+
+  it('regenerate-round button only changes its own round and is disabled when locked', () => {
+    seed(22);
+    const root = document.createElement('div');
+    const cleanup = renderRounds(root);
+    generate(root);
+    const before = structuredClone(getData().currentSession!.rounds);
+    (root.querySelector('.round[data-round-index="2"] .regenerate-round-button') as HTMLButtonElement).click();
+    const after = getData().currentSession!.rounds;
+    expect(after[1]).toEqual(before[1]);
+    expect(after[3]).toEqual(before[3]);
+    expect(after[0]).toEqual(before[0]);
+    (root.querySelector('.round[data-round-index="2"] .lock-button') as HTMLButtonElement).click();
+    expect((root.querySelector('.round[data-round-index="2"] .regenerate-round-button') as HTMLButtonElement).disabled).toBe(true);
     cleanup();
   });
 

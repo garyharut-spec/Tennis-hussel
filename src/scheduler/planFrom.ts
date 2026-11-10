@@ -7,7 +7,8 @@ import type { TimeSlot } from './timeGrid.ts';
 export interface RoundLike {
   index: number;
   start: string;
-  games: GameAssignment[];
+  /** Generated games have 2 v 2; manually edited ones may have fewer players per team. */
+  games: Array<Omit<GameAssignment, 'teamA' | 'teamB'> & { teamA: string[]; teamB: string[] }>;
   sittingOut: string[];
   locked: boolean;
 }
@@ -15,6 +16,8 @@ export interface RoundLike {
 export interface BasicPlayer {
   id: string;
   level: number;
+  /** Index of the first round this player will NOT play (they have announced they are leaving). */
+  leaveFromRound?: number;
 }
 
 export interface PlanFromInput {
@@ -27,6 +30,8 @@ export interface PlanFromInput {
   courtsForRound?: (roundIndex: number) => number[];
   beginnerThreshold: number;
   rng: Rng;
+  /** Regenerate only roundIndex; later rounds are kept exactly as they are. */
+  onlyThisRound?: boolean;
 }
 
 /**
@@ -37,11 +42,17 @@ export interface PlanFromInput {
  */
 export function planFrom(input: PlanFromInput): RoundLike[] {
   const kept = input.existingRounds.filter((r) => r.index < input.roundIndex);
-  const lockedFuture = new Map(input.existingRounds.filter((r) => r.index >= input.roundIndex && r.locked).map((r) => [r.index, r]));
+  const lockedFuture = new Map(
+    input.existingRounds
+      .filter((r) => r.index >= input.roundIndex && (r.locked || (input.onlyThisRound && r.index !== input.roundIndex)))
+      .map((r) => [r.index, r]),
+  );
 
   const stats = new Map<string, PlayerState>(
     input.presentPlayers.map((p) => [p.id, { id: p.id, level: p.level, gamesPlayed: 0, lastPlayedRoundIndex: -1 }]),
   );
+  const leaveFrom = new Map<string, number>();
+  for (const p of input.presentPlayers) if (p.leaveFromRound !== undefined) leaveFrom.set(p.id, p.leaveFromRound);
   const partnerCounts = new Map<string, number>();
   const opponentCounts = new Map<string, number>();
 
@@ -64,7 +75,7 @@ export function planFrom(input: PlanFromInput): RoundLike[] {
     const courts = input.courtsForRound ? input.courtsForRound(slot.index) : input.defaultCourts;
     const roundResult = scheduleRound({
       roundIndex: slot.index,
-      presentPlayers: [...stats.values()],
+      presentPlayers: [...stats.values()].filter((p) => slot.index < (leaveFrom.get(p.id) ?? Infinity)),
       courts,
       beginnerThreshold: input.beginnerThreshold,
       partnerCounts,

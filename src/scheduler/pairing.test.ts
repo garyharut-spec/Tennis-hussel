@@ -33,11 +33,10 @@ describe('splitIntoGames', () => {
     expect(games[0]!.explanations).toContainEqual({ code: 'ODD_BEGINNERS', params: { n: 3 } });
   });
 
-  it('flags a four-beginner game but still produces a valid split', () => {
+  it('still produces a valid split when all four players are beginners', () => {
     const players = [player('b1', BEGINNER), player('b2', BEGINNER), player('b3', BEGINNER), player('b4', BEGINNER)];
     const games = splitIntoGames(['b1', 'b2', 'b3', 'b4'], [1], playerMap(players), THRESHOLD, new Map(), new Map(), createRng(1));
 
-    expect(games[0]!.explanations.map((e) => e.code)).toContain('FOUR_BEGINNERS');
     expect([...games[0]!.teamA, ...games[0]!.teamB].sort()).toEqual(['b1', 'b2', 'b3', 'b4']);
   });
 
@@ -97,7 +96,6 @@ describe('splitIntoGames', () => {
     const games = splitIntoGames(order, [1, 2], playerMap(players), THRESHOLD, new Map(), new Map(), createRng(5));
 
     for (const game of games) {
-      expect(game.explanations.map((e) => e.code)).not.toContain('FOUR_BEGINNERS');
       expect(game.explanations.map((e) => e.code)).not.toContain('ODD_BEGINNERS');
     }
   });

@@ -20,7 +20,7 @@ function run(presentPlayers: PlayerState[], courts: number[], seed = 1) {
 }
 
 describe('scheduleRound', () => {
-  it.each([0, 1, 2, 3])('nobody plays with %i present players', (n) => {
+  it.each([0, 1])('nobody plays with %i present players', (n) => {
     const result = run(players(n), [1, 2, 3, 4]);
     expect(result.games).toHaveLength(0);
     expect(result.sittingOut).toHaveLength(n);
@@ -32,10 +32,31 @@ describe('scheduleRound', () => {
     expect(result.sittingOut).toHaveLength(0);
   });
 
-  it.each([5, 6, 7])('%i players use only one court, the rest sit out', (n) => {
+  it.each([2, 3])('%i players play one singles game on the first court; a third sits out', (n) => {
     const result = run(players(n), [1, 2, 3, 4]);
     expect(result.games).toHaveLength(1);
-    expect(result.sittingOut).toHaveLength(n - 4);
+    expect(result.games[0]!.teamA).toHaveLength(1);
+    expect(result.games[0]!.teamB).toHaveLength(1);
+    expect(result.games[0]!.explanations).toEqual([{ code: 'SINGLES_GAME' }]);
+    expect(result.sittingOut).toHaveLength(n - 2);
+  });
+
+  it('5 players: one doubles game, one sits out', () => {
+    const result = run(players(5), [1, 2, 3, 4]);
+    expect(result.games).toHaveLength(1);
+    expect(result.sittingOut).toHaveLength(1);
+  });
+
+  it.each([6, 7])('%i players: doubles on court 1 plus singles on the spare court 2', (n) => {
+    const result = run(players(n), [1, 2, 3, 4]);
+    expect(result.games.map((g) => [g.court, g.teamA.length + g.teamB.length])).toEqual([[1, 4], [2, 2]]);
+    expect(result.sittingOut).toHaveLength(n - 6);
+  });
+
+  it('never makes singles when courts are the limit', () => {
+    const result = run(players(10), [1, 2]);
+    expect(result.games.every((g) => g.teamA.length === 2)).toBe(true);
+    expect(result.sittingOut).toHaveLength(2);
   });
 
   it('9 players on 4 courts fill two games, one player sits out', () => {

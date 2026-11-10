@@ -17,6 +17,40 @@ function writeFlag(key: string, value: boolean): void {
   }
 }
 
+export type Theme = 'light' | 'dark';
+const THEME_KEY = 'hussel:theme';
+
+/** The explicit choice, or null when the user has not chosen (then the OS setting applies). */
+export function getStoredTheme(): Theme | null {
+  try {
+    const v = localStorage.getItem(THEME_KEY);
+    return v === 'light' || v === 'dark' ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+export function getEffectiveTheme(): Theme {
+  return (
+    getStoredTheme() ?? (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+  );
+}
+
+export function applyTheme(): void {
+  const stored = getStoredTheme();
+  if (stored) document.documentElement.dataset['theme'] = stored;
+  else delete document.documentElement.dataset['theme'];
+}
+
+export function setTheme(theme: Theme): void {
+  try {
+    localStorage.setItem(THEME_KEY, theme);
+  } catch {
+    // ignore persistence failures (e.g. private browsing)
+  }
+  applyTheme();
+}
+
 export function isSoundEnabled(): boolean {
   return readFlag(SOUND_KEY);
 }

@@ -86,7 +86,7 @@ describe('exportJson / importJson', () => {
         id: '2026-11-05',
         config: DEFAULT_DEFAULTS,
         attendance: [],
-        rounds: [{ index: 0, start: '19:00', games: [{ court: 1, teamA: ['a', 'b'], teamB: ['c'] }], sittingOut: [], locked: false }],
+        rounds: [{ index: 0, start: '19:00', games: [{ court: 1, teamA: ['a', 'b'], teamB: ['c', 'd', 'e'] }], sittingOut: [], locked: false }],
       },
     };
     expect(() => importJson(JSON.stringify(data))).toThrow();

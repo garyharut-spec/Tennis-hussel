@@ -12,22 +12,9 @@ describe('renderMenu', () => {
     document.body.classList.remove('wall-mode');
   });
 
-  it('hides the Players entry on wide screens and shows it on narrow ones', () => {
-    const wide = document.createElement('div');
-    renderMenu(wide, { showPlayersEntry: false, onPlayers: () => {}, onClose: () => {} })();
-    expect(wide.querySelector('.menu-players')).toBeNull();
-
-    const onPlayers = vi.fn();
-    const narrow = document.createElement('div');
-    const cleanup = renderMenu(narrow, { showPlayersEntry: true, onPlayers, onClose: () => {} });
-    (narrow.querySelector('.menu-players') as HTMLButtonElement).click();
-    expect(onPlayers).toHaveBeenCalledOnce();
-    cleanup();
-  });
-
   it('toggles wall mode on the body', () => {
     const root = document.createElement('div');
-    const cleanup = renderMenu(root, { showPlayersEntry: false, onPlayers: () => {}, onClose: () => {} });
+    const cleanup = renderMenu(root, { onClose: () => {} });
     const box = root.querySelector('.wall-toggle') as HTMLInputElement;
     box.checked = true;
     box.dispatchEvent(new Event('change', { bubbles: true }));
@@ -40,7 +27,7 @@ describe('renderMenu', () => {
       ensureSession(d);
     });
     const root = document.createElement('div');
-    const cleanup = renderMenu(root, { showPlayersEntry: false, onPlayers: () => {}, onClose: () => {} });
+    const cleanup = renderMenu(root, { onClose: () => {} });
     const buttons = [...root.querySelectorAll('.menu-stats-section button')];
     expect(root.querySelector('.export-button')).not.toBeNull();
     expect(root.querySelector('.import-input')).not.toBeNull();
@@ -51,7 +38,7 @@ describe('renderMenu', () => {
   it('calls onClose from the close button', () => {
     const onClose = vi.fn();
     const root = document.createElement('div');
-    const cleanup = renderMenu(root, { showPlayersEntry: false, onPlayers: () => {}, onClose });
+    const cleanup = renderMenu(root, { onClose });
     (root.querySelector('.menu-close') as HTMLButtonElement).click();
     expect(onClose).toHaveBeenCalledOnce();
     cleanup();

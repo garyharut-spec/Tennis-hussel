@@ -18,7 +18,7 @@ export function renderSettings(root: HTMLElement, onDone: () => void): () => voi
     const session = ensureSession(data);
     const config = session.config;
     const language = getLanguage();
-    const tiles = courtTiles(session, data.defaults, extraCourts);
+    const tiles = courtTiles(session, data.defaults, extraCourts, data.knownCourts);
 
     root.innerHTML = `
       <div class="settings">
@@ -73,7 +73,9 @@ export function renderSettings(root: HTMLElement, onDone: () => void): () => voi
     function commit(apply: (c: SessionConfig) => void): void {
       updateData((d) => {
         const s = ensureSession(d);
+        const before = s.config.courts;
         apply(s.config);
+        d.knownCourts = [...new Set([...(d.knownCourts ?? []), ...before, ...s.config.courts])].sort((a, b) => a - b);
         if (saveAsDefault) d.defaults = { ...s.config };
       });
     }
@@ -95,7 +97,7 @@ export function renderSettings(root: HTMLElement, onDone: () => void): () => voi
 
     root.querySelector('.add-court-confirm')?.addEventListener('click', () => {
       const text = (root.querySelector('[name="newCourt"]') as HTMLInputElement).value.trim();
-      const known = courtTiles(ensureSession(getData()), getData().defaults, extraCourts);
+      const known = courtTiles(ensureSession(getData()), getData().defaults, extraCourts, getData().knownCourts);
       if (!/^\d{1,3}$/.test(text) || Number(text) < 1 || known.includes(Number(text))) {
         courtError = true;
         (root.querySelector('[data-error="court"]') as HTMLElement).hidden = false;

@@ -1,5 +1,8 @@
 import './style.css';
 import { renderApp } from './app.ts';
+import { applyTheme } from './preferences.ts';
+
+applyTheme();
 
 const root = document.querySelector<HTMLDivElement>('#app');
 if (root) {

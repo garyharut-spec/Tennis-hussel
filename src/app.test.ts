@@ -80,16 +80,14 @@ describe('renderApp', () => {
     cleanup();
   });
 
-  it('on a narrow screen the menu opens the player list and back returns to the rounds', () => {
+  it('on a narrow screen the header Players button opens the player list and back returns to the rounds', () => {
     mockNarrow(true);
     const root = document.createElement('div');
     const cleanup = renderApp(root);
     const layout = root.querySelector('.layout') as HTMLElement;
     expect(layout.dataset['mobileView']).toBe('rounds');
-    (root.querySelector('.menu-toggle') as HTMLButtonElement).click();
-    (root.querySelector('.overlay .menu-players') as HTMLButtonElement).click();
+    (root.querySelector('.players-button') as HTMLButtonElement).click();
     expect(layout.dataset['mobileView']).toBe('players');
-    expect((root.querySelector('.overlay') as HTMLElement).hidden).toBe(true);
     (root.querySelector('.back-button') as HTMLButtonElement).click();
     expect(layout.dataset['mobileView']).toBe('rounds');
     cleanup();

@@ -23,6 +23,7 @@ export interface Messages {
   schedule_lock_button: string;
   schedule_unlock_button: string;
   schedule_regenerate_button: string;
+  schedule_regenerate_round_button: string;
   schedule_undo_button: string;
   schedule_locked_notice: string;
   schedule_replan_banner: string;
@@ -34,12 +35,12 @@ export interface Messages {
   schedule_no_courts_message: string;
 
   explain_ODD_BEGINNERS: (n: number) => string;
-  explain_FOUR_BEGINNERS: string;
   explain_BEGINNERS_SAME_TEAM: string;
   explain_TEAM_IMBALANCE: string;
   explain_REPEAT_PARTNER: string;
   explain_REPEAT_OPPONENT: string;
   explain_SAME_COURT_AS_LAST_ROUND: string;
+  explain_SINGLES_GAME: string;
 
   now_sound_toggle_label: string;
   now_wall_mode_label: string;
@@ -65,10 +66,13 @@ export interface Messages {
   round_resting_label: string;
   round_resting_empty: string;
   court_label: (n: number) => string;
+  court_empty: string;
   menu_button_label: string;
-  menu_players: string;
+  players_button_label: string;
   menu_stats: string;
   settings_button_label: string;
+  theme_switch_to_light: string;
+  theme_switch_to_dark: string;
   close_button_label: string;
   back_button_label: string;
   add_player_label: string;
@@ -77,9 +81,14 @@ export interface Messages {
   add_player_button: string;
   players_present_heading: (n: number) => string;
   players_mark_left_button: string;
+  players_leaving_title: string;
+  players_leaving_badge: (time: string) => string;
+  players_leaving_cancel: string;
   players_sort_toggle_name: string;
   players_sort_toggle_level: string;
   player_edit_label: string;
+  player_name_label: string;
+  player_level_label: string;
   settings_title: string;
   settings_courts_label: string;
   settings_courts_count: (n: number) => string;

@@ -61,7 +61,7 @@ function isValidDefaults(value: unknown): boolean {
 }
 
 function isValidTeam(value: unknown): boolean {
-  return Array.isArray(value) && value.length === 2 && value.every((id) => typeof id === 'string');
+  return Array.isArray(value) && value.length >= 1 && value.length <= 2 && value.every((id) => typeof id === 'string');
 }
 
 function isValidGame(value: unknown): boolean {
@@ -88,7 +88,7 @@ function isValidRound(value: unknown): boolean {
 function isValidAttendance(value: unknown): boolean {
   if (typeof value !== 'object' || value === null) return false;
   const a = value as Record<string, unknown>;
-  return typeof a['memberId'] === 'string' && typeof a['from'] === 'string' && (a['until'] === null || typeof a['until'] === 'string');
+  return typeof a['memberId'] === 'string' && typeof a['from'] === 'string' && (a['until'] === null || typeof a['until'] === 'string') && (a['leavesAt'] === undefined || typeof a['leavesAt'] === 'string');
 }
 
 function isValidSession(value: unknown): boolean {
@@ -112,6 +112,8 @@ function isValidAppData(value: unknown): value is AppData {
     Array.isArray(v['roster']) &&
     v['roster'].every(isValidMember) &&
     isValidDefaults(v['defaults']) &&
+    (v['knownCourts'] === undefined ||
+      (Array.isArray(v['knownCourts']) && v['knownCourts'].every((c) => typeof c === 'number'))) &&
     Array.isArray(v['history']) &&
     v['history'].every(isValidHistoryEntry) &&
     (v['currentSession'] === null || isValidSession(v['currentSession']))

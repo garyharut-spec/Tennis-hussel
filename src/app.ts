@@ -1,6 +1,6 @@
 import { playChangeoverAlert } from './changeoverAlert.ts';
 import { getLanguage, onLanguageChange, setLanguage, t, type Language } from './i18n/index.ts';
-import { isSoundEnabled, isWallMode } from './preferences.ts';
+import { getEffectiveTheme, isSoundEnabled, isWallMode, setTheme } from './preferences.ts';
 import { roundStatus, timeGridFor } from './schedule.ts';
 import { renderMenu } from './screens/menu.ts';
 import { renderPlayerPanel } from './screens/playerPanel.ts';
@@ -11,10 +11,6 @@ import { getData, onDataChange } from './store.ts';
 import { releaseWakeLock, requestWakeLock } from './wakeLock.ts';
 
 type Overlay = 'settings' | 'menu';
-
-function isNarrow(): boolean {
-  return window.matchMedia?.('(max-width: 899px)').matches ?? false;
-}
 
 export function renderApp(root: HTMLElement): () => void {
   let overlayCleanup: (() => void) | undefined;
@@ -30,6 +26,7 @@ export function renderApp(root: HTMLElement): () => void {
         <button type="button" data-lang="nl" class="lang-button">NL</button>
       </div>
       <button type="button" class="cog-button">⚙</button>
+      <button type="button" class="theme-button"></button>
     </header>
     <div class="layout" data-mobile-view="rounds">
       <aside class="player-aside">
@@ -45,6 +42,7 @@ export function renderApp(root: HTMLElement): () => void {
   const countdown = root.querySelector('.countdown') as HTMLElement;
   const menuToggle = root.querySelector('.menu-toggle') as HTMLButtonElement;
   const cogButton = root.querySelector('.cog-button') as HTMLButtonElement;
+  const themeButton = root.querySelector('.theme-button') as HTMLButtonElement;
   const backButton = root.querySelector('.back-button') as HTMLButtonElement;
   const layout = root.querySelector('.layout') as HTMLElement;
   const overlay = root.querySelector('.overlay') as HTMLElement;
@@ -70,11 +68,6 @@ export function renderApp(root: HTMLElement): () => void {
       kind === 'settings'
         ? renderSettings(overlayBody, closeOverlay)
         : renderMenu(overlayBody, {
-            showPlayersEntry: isNarrow(),
-            onPlayers: () => {
-              layout.dataset['mobileView'] = 'players';
-              closeOverlay();
-            },
             onClose: closeOverlay,
           });
   }
@@ -103,6 +96,9 @@ export function renderApp(root: HTMLElement): () => void {
     title.textContent = t('appTitle');
     menuToggle.setAttribute('aria-label', t('menu_button_label'));
     cogButton.setAttribute('aria-label', t('settings_button_label'));
+    const dark = getEffectiveTheme() === 'dark';
+    themeButton.textContent = dark ? '☀' : '☾';
+    themeButton.setAttribute('aria-label', t(dark ? 'theme_switch_to_light' : 'theme_switch_to_dark'));
     backButton.textContent = `← ${t('back_button_label')}`;
     const language = getLanguage();
     for (const button of langButtons) button.classList.toggle('active', button.dataset['lang'] === language);
@@ -111,6 +107,10 @@ export function renderApp(root: HTMLElement): () => void {
 
   menuToggle.addEventListener('click', () => openOverlay('menu'));
   cogButton.addEventListener('click', () => openOverlay('settings'));
+  themeButton.addEventListener('click', () => {
+    setTheme(getEffectiveTheme() === 'dark' ? 'light' : 'dark');
+    renderStaticText();
+  });
   backButton.addEventListener('click', () => {
     layout.dataset['mobileView'] = 'rounds';
   });
