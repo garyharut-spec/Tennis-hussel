@@ -196,10 +196,27 @@ export function renderRounds(root: HTMLElement): () => void {
     }
   }
 
+  function statusSignature(): string {
+    const session = ensureSession(getData());
+    const now = new Date();
+    return session.rounds.map((r) => roundStatus(session, r.index, now)).join(',');
+  }
+
   render();
+  let lastSignature = statusSignature();
+  // Re-render when a round starts or ends, so the "now" tag and read-only state keep up with the clock.
+  const clock = setInterval(() => {
+    const signature = statusSignature();
+    if (signature !== lastSignature) render();
+    lastSignature = signature;
+  }, 15000);
   const unsubscribeLanguage = onLanguageChange(render);
-  const unsubscribeData = onDataChange(render);
+  const unsubscribeData = onDataChange(() => {
+    render();
+    lastSignature = statusSignature();
+  });
   return () => {
+    clearInterval(clock);
     destroySortables();
     unsubscribeLanguage();
     unsubscribeData();

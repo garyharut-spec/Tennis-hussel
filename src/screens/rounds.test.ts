@@ -176,4 +176,17 @@ describe('renderRounds', () => {
     expect(getData().currentSession!.rounds).toEqual(before);
     cleanup();
   });
+
+  it('moves the "now" tag and locks the finished round when time passes the changeover', () => {
+    seed(22);
+    const root = document.createElement('div');
+    const cleanup = renderRounds(root);
+    generate(root);
+    const statuses = () => [...root.querySelectorAll('.round')].map((r) => r.getAttribute('data-status'));
+    expect(statuses()).toEqual(['now', 'next', 'future', 'future']);
+
+    vi.advanceTimersByTime(21 * 60 * 1000); // 19:31
+    expect(statuses()).toEqual(['past', 'now', 'next', 'future']);
+    cleanup();
+  });
 });
