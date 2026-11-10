@@ -370,7 +370,7 @@ label {
 
 .round {
   margin-bottom: 2rem;
-  scroll-margin-top: 4.5rem;
+  scroll-margin-top: 7rem;
 }
 
 .round[data-status='past'] {
@@ -540,19 +540,22 @@ label {
   font-weight: 700;
   border: 2px solid var(--border);
   background: var(--bg);
-  color: var(--border);
+  color: var(--fg);
+  opacity: 0.55;
 }
 
 .court-tile.on {
   border-color: var(--court-line);
   background: var(--court);
   color: var(--fg);
+  opacity: 1;
 }
 
 .court-tile.add {
   border-style: dashed;
   border-color: var(--accent);
   color: var(--accent);
+  opacity: 1;
 }
 
 .add-court {
@@ -642,4 +645,47 @@ body.wall-mode .swap-hint {
 
 body.wall-mode .layout {
   display: block;
+}
+
+/* ---------- narrow screens ---------- */
+
+.app-header button {
+  padding-inline: 0.5rem;
+}
+
+.settings-two > label {
+  min-width: 0;
+}
+
+.settings-two input {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding-inline: 0.75rem;
+    gap: 0.35rem;
+  }
+
+  .player-aside,
+  .rounds-main {
+    padding: 0.75rem;
+  }
+
+  .court-card {
+    padding: 0.4rem;
+  }
+
+  .court-sides {
+    gap: 0.3rem;
+  }
+
+  .player-card {
+    padding: 0.3rem 0.4rem;
+  }
+
+  .player-badge {
+    font-size: 0.7rem;
+  }
 }
