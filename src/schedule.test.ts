@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { setPresent } from './attendance.ts';
-import { currentRoundIndex, needsReplan, regenerateFrom, setRoundLocked, setRoundNotes, timeGridFor } from './schedule.ts';
+import { currentRoundIndex, firstReplanIndex, roundStatus, needsReplan, regenerateFrom, setRoundLocked, setRoundNotes, timeGridFor } from './schedule.ts';
 import { DEFAULT_DEFAULTS } from './storage.ts';
 import type { AppData, Member, Session } from './types.ts';
 
@@ -126,5 +126,36 @@ describe('needsReplan', () => {
     regenerateFrom(data, session, 1, new Date('2026-11-05T19:30:00'));
 
     expect(needsReplan(data, session, 1)).toBe(false);
+  });
+});
+
+describe('roundStatus / firstReplanIndex', () => {
+  const sess = (): Session => ({
+    id: 'x',
+    config: { ...DEFAULT_DEFAULTS, start: '19:00', end: '21:00', gameMinutes: 30, gapMinutes: 0 },
+    attendance: [],
+    rounds: [],
+  });
+  const at = (hhmm: string) => new Date(`2026-11-10T${hhmm}:00`);
+
+  it('marks now, next and future during the evening', () => {
+    const s = sess();
+    expect([0, 1, 2].map((i) => roundStatus(s, i, at('19:10')))).toEqual(['now', 'next', 'future']);
+    expect(firstReplanIndex(s, at('19:10'))).toBe(1);
+  });
+  it('has no "now" round before the evening starts', () => {
+    const s = sess();
+    expect([0, 1].map((i) => roundStatus(s, i, at('18:00')))).toEqual(['next', 'future']);
+    expect(firstReplanIndex(s, at('18:00'))).toBe(0);
+  });
+  it('moves on at a round boundary', () => {
+    const s = sess();
+    expect([0, 1].map((i) => roundStatus(s, i, at('19:30')))).toEqual(['past', 'now']);
+    expect(firstReplanIndex(s, at('19:30'))).toBe(2);
+  });
+  it('treats everything as past after the end', () => {
+    const s = sess();
+    expect([0, 3].map((i) => roundStatus(s, i, at('21:30')))).toEqual(['past', 'past']);
+    expect(firstReplanIndex(s, at('21:30'))).toBe(4);
   });
 });

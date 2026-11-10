@@ -91,3 +91,29 @@ export function currentRoundIndex(session: Session, now: Date = new Date()): num
   }
   return grid[grid.length - 1]!.index;
 }
+
+export type RoundStatus = 'past' | 'now' | 'next' | 'future';
+
+function hhmmOf(now: Date): string {
+  return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+}
+
+export function roundStatus(session: Session, roundIndex: number, now: Date = new Date()): RoundStatus {
+  const grid = timeGridFor(session);
+  const slot = grid.find((s) => s.index === roundIndex);
+  if (!slot) return 'past';
+  const hhmm = hhmmOf(now);
+  if (hhmm >= slot.end) return 'past';
+  if (hhmm >= slot.start) return 'now';
+  // Not started: "next" if every earlier slot has started, else "future".
+  const earlierUnstarted = grid.some((s) => s.index < roundIndex && hhmm < s.start);
+  return earlierUnstarted ? 'future' : 'next';
+}
+
+/** Index of the first round that has not started yet; the grid length if all have. */
+export function firstReplanIndex(session: Session, now: Date = new Date()): number {
+  const grid = timeGridFor(session);
+  const hhmm = hhmmOf(now);
+  const first = grid.find((s) => hhmm < s.start);
+  return first ? first.index : grid.length;
+}
