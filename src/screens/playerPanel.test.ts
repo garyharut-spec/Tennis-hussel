@@ -50,13 +50,38 @@ describe('renderPlayerPanel', () => {
     cleanup();
   });
 
-  it('rejects a new player without a valid level', () => {
+  it('gives a new player level 9 when no level is typed', () => {
     const root = document.createElement('div');
     const cleanup = renderPlayerPanel(root);
     submit(root, 'Zed', '');
+    expect(getData().roster).toHaveLength(1);
+    expect(getData().roster[0]!.level).toBe(9);
+    expect(isPresent(getData().currentSession!, getData().roster[0]!.id)).toBe(true);
+    cleanup();
+  });
+
+  it('still rejects a level that is typed but invalid', () => {
+    const root = document.createElement('div');
+    const cleanup = renderPlayerPanel(root);
+    submit(root, 'Zed', 'abc');
     expect(getData().roster).toHaveLength(0);
     expect((root.querySelector('.field-error') as HTMLElement).hidden).toBe(false);
     cleanup();
+  });
+
+  it('keeps the focus in the name field after adding a new or a saved player', () => {
+    addRoster(['a', 'Anna', 4.5]);
+    const root = document.createElement('div');
+    document.body.append(root);
+    const cleanup = renderPlayerPanel(root);
+    submit(root, 'Zed');
+    expect(document.activeElement).toBe(root.querySelector('[name="name"]'));
+    (document.activeElement as HTMLElement).blur();
+    submit(root, 'Anna');
+    expect(document.activeElement).toBe(root.querySelector('[name="name"]'));
+    expect((root.querySelector('[name="name"]') as HTMLInputElement).value).toBe('');
+    cleanup();
+    root.remove();
   });
 
   it('lists only non-present saved players in the dropdown, including those marked left', () => {

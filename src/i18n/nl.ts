@@ -76,7 +76,7 @@ export const nl: Messages = {
   back_button_label: 'Terug',
   add_player_label: 'Speler toevoegen',
   add_player_placeholder: 'Kies een speler of typ een nieuwe naam',
-  add_player_new_level_placeholder: 'Niveau nieuwe speler',
+  add_player_new_level_placeholder: 'Niveau (optioneel, standaard 9)',
   add_player_button: 'Toevoegen',
   players_present_heading: (n) => `Aanwezig (${n})`,
   players_mark_left_button: 'Vertrokken',

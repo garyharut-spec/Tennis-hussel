@@ -73,7 +73,7 @@ export const en: Messages = {
   back_button_label: 'Back',
   add_player_label: 'Add player',
   add_player_placeholder: 'Pick a saved player or type a new name',
-  add_player_new_level_placeholder: 'Level of new player',
+  add_player_new_level_placeholder: 'Level (optional, default 9)',
   add_player_button: 'Add',
   players_present_heading: (n) => `Present (${n})`,
   players_mark_left_button: 'Mark as left',

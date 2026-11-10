@@ -12,6 +12,9 @@ import { getData, onDataChange, updateData } from '../store.ts';
 import { playerCardHtml } from '../ui/playerCard.ts';
 import type { Member } from '../types.ts';
 
+/** Level given to a new player when none is typed (9 = beginner). */
+const DEFAULT_NEW_LEVEL = 9;
+
 interface PendingDuplicate {
   firstName: string;
   level: number;
@@ -26,6 +29,7 @@ export function renderPlayerPanel(root: HTMLElement): () => void {
   let draftName = '';
   let draftLevel = '';
   let showError = false;
+  let focusNameAfterRender = false;
 
   const sameName = (m: Member, text: string) => displayName(m).toLowerCase() === text.trim().toLowerCase();
 
@@ -111,10 +115,12 @@ export function renderPlayerPanel(root: HTMLElement): () => void {
       const existing = getData().roster.find((m) => sameName(m, text));
       if (existing) {
         clearDraft();
+        focusNameAfterRender = true;
         updateData((d) => setPresent(ensureSession(d), existing.id, true));
         return;
       }
-      const level = parseLevel(levelInput.value);
+      const levelText = levelInput.value.trim();
+      const level = levelText === '' ? DEFAULT_NEW_LEVEL : parseLevel(levelText);
       if (level === null) {
         draftName = text;
         draftLevel = levelInput.value;
@@ -129,6 +135,7 @@ export function renderPlayerPanel(root: HTMLElement): () => void {
         return;
       }
       clearDraft();
+      focusNameAfterRender = true;
       const id = randomId();
       updateData((d) => {
         d.roster.push({ id, firstName: text, level });
@@ -157,6 +164,7 @@ export function renderPlayerPanel(root: HTMLElement): () => void {
         const id = randomId();
         pendingDuplicate = null;
         clearDraft();
+        focusNameAfterRender = true;
         updateData((d) => {
           const old = d.roster.find((m) => m.id === pending.existingMemberId);
           if (old) old.lastInitial = b;
@@ -217,6 +225,11 @@ export function renderPlayerPanel(root: HTMLElement): () => void {
         });
       });
     });
+
+    if (focusNameAfterRender) {
+      focusNameAfterRender = false;
+      nameInput.focus();
+    }
   }
 
   render();
