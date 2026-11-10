@@ -80,4 +80,34 @@ export interface Messages {
   stats_import_button: string;
   stats_import_error: string;
   stats_backup_reminder: string;
+
+  rounds_played_count: (n: number) => string;
+  round_tag_now: string;
+  round_tag_next: string;
+  round_resting_label: string;
+  round_resting_empty: string;
+  court_label: (n: number) => string;
+  menu_button_label: string;
+  menu_players: string;
+  menu_stats: string;
+  settings_button_label: string;
+  close_button_label: string;
+  back_button_label: string;
+  add_player_label: string;
+  add_player_placeholder: string;
+  add_player_new_level_placeholder: string;
+  add_player_button: string;
+  players_present_heading: (n: number) => string;
+  players_mark_left_button: string;
+  players_sort_toggle_name: string;
+  players_sort_toggle_level: string;
+  player_edit_label: string;
+  settings_title: string;
+  settings_courts_label: string;
+  settings_courts_count: (n: number) => string;
+  settings_courts_hint: string;
+  settings_add_court_label: string;
+  settings_round_minutes_label: string;
+  settings_done_button: string;
+  header_next_changeover: string;
 }

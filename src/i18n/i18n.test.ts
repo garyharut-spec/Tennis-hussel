@@ -38,6 +38,18 @@ describe('t()', () => {
   });
 });
 
+describe('rounds_played_count', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    setLanguage('en');
+  });
+  it('pluralises in English and Dutch', () => {
+    expect([0, 1, 2].map((n) => t('rounds_played_count', n))).toEqual(['0 rounds played', '1 round played', '2 rounds played']);
+    setLanguage('nl');
+    expect([0, 1, 2].map((n) => t('rounds_played_count', n))).toEqual(['0 rondes gespeeld', '1 ronde gespeeld', '2 rondes gespeeld']);
+  });
+});
+
 describe('formatDecimal / parseDecimal', () => {
   it('formats with a dot in English and a comma in Dutch', () => {
     expect(formatDecimal(4.5, 'en')).toBe('4.5');
